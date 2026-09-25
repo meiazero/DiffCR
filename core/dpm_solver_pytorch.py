@@ -290,13 +290,15 @@ def model_wrapper(
             return output
         elif model_type == "x_start":
             alpha_t, sigma_t = noise_schedule.marginal_alpha(t_continuous), noise_schedule.marginal_std(t_continuous)
-            return (x - alpha_t * output) / sigma_t
+            dims = x.dim()  # per-sample alpha/sigma, as in the upstream DPM-Solver
+            return (x - expand_dims(alpha_t, dims) * output) / expand_dims(sigma_t, dims)
         elif model_type == "v":
             alpha_t, sigma_t = noise_schedule.marginal_alpha(t_continuous), noise_schedule.marginal_std(t_continuous)
-            return alpha_t * output + sigma_t * x
+            dims = x.dim()
+            return expand_dims(alpha_t, dims) * output + expand_dims(sigma_t, dims) * x
         elif model_type == "score":
             sigma_t = noise_schedule.marginal_std(t_continuous)
-            return -sigma_t * output
+            return -expand_dims(sigma_t, x.dim()) * output
 
     def cond_grad_fn(x, t_input):
         """
