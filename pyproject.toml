@@ -1,0 +1,47 @@
+[project]
+name = "diffcr"
+version = "0.1.0"
+description = "DiffCR (Zou et al., TGRS 2024) fork"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "numpy>=2.1",
+  "pandas>=2.2",
+  "pillow>=10",
+  "scipy>=1.14",
+  "tensorboard>=2.20",  # core/logger.py writes through torch.utils.tensorboard
+  "tifffile>=2024.8",  # data/dataset.py reads Sen2_MTC tiles
+  "torch>=2.6",
+  "torchvision>=0.21",
+  "tqdm>=4.66",
+]
+
+[project.optional-dependencies]
+# evaluation/ scripts only (FID, LPIPS, IS, PSNR/SSIM)
+eval = ["clean-fid>=0.1.35", "lpips>=0.1.4", "rich>=13", "scikit-image>=0.24"]
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.8"]
+
+[tool.uv]
+package = false
+
+[tool.ruff]
+# Upstream DiffCR code keeps its own style.
+extend-exclude = ["config", "core", "data", "evaluation", "models", "preprocess", "run.py"]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B", "SIM", "C4", "PTH", "RUF"]
+ignore = ["RUF001", "RUF002", "RUF003"]
+
+# cu126 wheels: the PyPI torch wheel targets CUDA 13, which needs a newer NVIDIA driver.
+[[tool.uv.index]]
+name = "pytorch-cu126"
+url = "https://download.pytorch.org/whl/cu126"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu126" }
+torchvision = { index = "pytorch-cu126" }

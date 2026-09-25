@@ -13,10 +13,11 @@
 
 ## Requirements
 
-To install dependencies:
+To install dependencies (uv, Python 3.12, torch from the CUDA 12.6 index):
 
 ```bash
-pip install -r requirements.txt
+uv sync                  # training and testing
+uv sync --extra eval     # plus the evaluation/ scripts (FID, LPIPS)
 ```
 
 <!-- >📋  Describe how to set up the environment, e.g. pip/conda/docker commands, download datasets, etc... -->
@@ -34,7 +35,7 @@ To download datasets:
 To train the models in the paper, run these commands:
 
 ```train
-python run.py -p train -c config/ours_sigmoid.json
+uv run python run.py -p train -c config/ours_sigmoid.json
 ```
 
 <!-- >📋  Describe how to train the models, with example commands on how to train the models in your paper, including the full training procedure and appropriate hyperparameters. -->
@@ -44,7 +45,7 @@ python run.py -p train -c config/ours_sigmoid.json
 To test the pre-trained models in the paper, run these commands:
 
 ```bash
-python run.py -p test -c config/ours_sigmoid.json
+uv run python run.py -p test -c config/ours_sigmoid.json
 ```
 
 ## Evaluation
