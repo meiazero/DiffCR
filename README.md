@@ -130,3 +130,8 @@ If you use our code or models in your research, please cite with:
 ## Visit Count
 
 ![XavierJiezou@DiffCR](https://count.getloli.com/@XavierJiezou@DiffCR?theme=moebooru) 
+
+## Checks before push
+
+Run `git config core.hooksPath .githooks` once per clone. `.githooks/pre-push` then
+refuses a push that fails `uvx ruff format --check .` or `uvx ruff check .`.
