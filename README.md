@@ -13,7 +13,10 @@
 
 ## Requirements
 
-To install dependencies (uv, Python 3.12, torch from the CUDA 12.6 index):
+To install dependencies (uv, Python 3.12; `uv sync` also installs the `scripts` group). The
+denoising network and the DPM-Solver++ sampler are also an installable package, `diffcr`
+(`src/diffcr/`, symlinks to `models/ours/` and `core/`), which other projects add as a path
+dependency; as a library it does not pin a torch build, so torch comes from PyPI here:
 
 ```bash
 uv sync                  # training and testing

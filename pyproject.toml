@@ -5,43 +5,53 @@ description = "DiffCR (Zou et al., TGRS 2024) fork"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-  "numpy>=2.1",
-  "pandas>=2.2",
-  "pillow>=10",
-  "scipy>=1.14",
-  "tensorboard>=2.20",  # core/logger.py writes through torch.utils.tensorboard
-  "tifffile>=2024.8",  # data/dataset.py reads Sen2_MTC tiles
-  "torch>=2.6",
-  "torchvision>=0.21",
-  "tqdm>=4.66",
+    "torch>=2.14.0",
 ]
 
 [project.optional-dependencies]
 # evaluation/ scripts only (FID, LPIPS, IS, PSNR/SSIM)
-eval = ["clean-fid>=0.1.35", "lpips>=0.1.4", "rich>=13", "scikit-image>=0.24"]
+eval = [
+    "clean-fid>=0.1.35",
+    "lpips>=0.1.4",
+    "rich>=15.0.0",
+    "scikit-image>=0.26.0",
+]
 
 [dependency-groups]
-dev = ["pytest>=8", "ruff>=0.8"]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.9",
+]
+scripts = [
+    "numpy>=2.5.3",
+    "pandas>=3.0.6",
+    "pillow>=12.3.0",
+    "scipy>=1.18.1",
+    "tensorboard>=2.21.0",  # core/logger.py writes through torch.utils.tensorboard
+    "tifffile>=2026.9.20",  # data/dataset.py reads Sen2_MTC tiles
+    "torchvision>=0.29.0",
+    "tqdm>=4.70.1",
+]
+
+# The network and sampler are a package (src/diffcr/, symlinks to models/ours/ and core/) that
+# other projects depend on; a library does not pin a torch build, so torch comes from PyPI
+# unless the application that installs it pins one.
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/diffcr"]
 
 [tool.uv]
-package = false
+default-groups = ["dev", "scripts"]  # `uv sync` here still installs what the scripts need
 
 [tool.ruff]
-# Upstream DiffCR code keeps its own style.
-extend-exclude = ["config", "core", "data", "evaluation", "models", "preprocess", "run.py"]
+# Upstream DiffCR code keeps its own style (src/diffcr/ links to it).
+extend-exclude = ["config", "core", "data", "evaluation", "models", "preprocess", "run.py", "src"]
 line-length = 100
 target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "W", "UP", "B", "SIM", "C4", "PTH", "RUF"]
 ignore = ["RUF001", "RUF002", "RUF003"]
-
-# cu126 wheels: the PyPI torch wheel targets CUDA 13, which needs a newer NVIDIA driver.
-[[tool.uv.index]]
-name = "pytorch-cu126"
-url = "https://download.pytorch.org/whl/cu126"
-explicit = true
-
-[tool.uv.sources]
-torch = { index = "pytorch-cu126" }
-torchvision = { index = "pytorch-cu126" }
